@@ -5,6 +5,7 @@ import styles from './styles'
 import { Entypo } from "@expo/vector-icons"
 import Footer from "./footer"
 import moment from "moment"
+import { S3Image } from "aws-amplify-react-native"
 
 export type MainContainerProps = {
   tweet: TweetType
@@ -24,7 +25,7 @@ const MainContainer = ({ tweet }: MainContainerProps) => {
       </View>
       <View>  
         <Text style={styles.content}> {tweet.content} </Text>
-        {!!tweet.image && <Image source={{ uri: tweet.image }} style={styles.image} />}
+        {!!tweet.image && <S3Image source={{ uri: tweet.image }} style={styles.image} imgKey={tweet.image} />}
       </View>
       <Footer tweet={tweet} />
     </View>
