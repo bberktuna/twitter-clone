@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import { Entypo, Feather, EvilIcons, AntDesign } from "@expo/vector-icons"
 import { API, graphqlOperation, Auth } from "aws-amplify"
 
-import { createLike } from "../../../../graphql/mutations"
+import { createLike, deleteLike } from "../../../../graphql/mutations"
 import { TweetType } from '../../../../types'
 import styles from './styles'
 
@@ -30,11 +30,8 @@ const Footer = ({ tweet }: FooterProps) => {
     }
     fetchUser()
   }, [])
-  
-  const onLike = async () => {
-    if (!user) {
-      return
-    }
+
+  const submitLike = async () => {
     const like = {
       userID: user.attributes.sub,
       tweetID: tweet.id,
@@ -47,6 +44,28 @@ const Footer = ({ tweet }: FooterProps) => {
     } catch (e) {
       console.log(e)
     }
+  }
+
+  const removeLike = async () => {
+    try {
+      await API.graphql(graphqlOperation(deleteLike, { input: {id: myLike.id} }))
+      setLikesCount(likesCount - 1)
+      setMyLike(null)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  
+  const onLike = async () => {
+    if (!user) {
+      return
+    }
+    if (!myLike) {
+      await submitLike()
+    } else {
+      await removeLike()
+    }
+
   }
 
   return (
